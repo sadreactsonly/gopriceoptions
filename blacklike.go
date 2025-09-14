@@ -146,10 +146,9 @@ func BSImpliedVol(callType bool, lastTradedPrice float64, underlying float64, st
 		startAnchorVolatility = 0.5
 	}
 	errlim := IVPrecision
-	maxl := 100
+	maxl := 1000
 	dv := errlim + 1
 	n := 0
-	maxloops := 100
 
 	for ; math.Abs(dv) > errlim && n < maxl; n++ {
 		difval := PriceBlackScholes(callType, underlying, strike, timeToExpiration, startAnchorVolatility, riskFreeInterest, dividend) - lastTradedPrice
@@ -157,12 +156,7 @@ func BSImpliedVol(callType bool, lastTradedPrice float64, underlying float64, st
 		dv = difval / v1
 		startAnchorVolatility = startAnchorVolatility - dv
 	}
-	var iv float64
-	if n < maxloops {
-		iv = startAnchorVolatility
-	} else {
-		iv = math.NaN()
-	}
+	
 
-	return iv
+	return startAnchorVolatility
 }
